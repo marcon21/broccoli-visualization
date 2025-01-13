@@ -1,0 +1,135 @@
+species,variety,protein,min_temp,max_temp,min_prec,max_prec
+Brassica oleracea,Galega Kale,4.31,-15.00,24.00,960,1680
+Brassica rapa,Turnip Tops,0.90,-7.00,24.00,720,1440
+Brassica rapa,Turnip Greens,1.50,-7.00,24.00,720,1440
+Brassica oleracea,Oxheart Cabbage,3.00,-6.00,22.00,1200,1680
+Brassica oleracea,White Cabbage,1.38,-6.00,22.00,960,1680
+Brassica napus,Canola,4.32,-8.00,30.00,960,1920
+Brassica juncea,Mustard Greens,2.86,-6.00,24.00,960,1680
+Brassica rapa,Chinese Cabbage,1.50,10.00,27.00,1200,1680
+Brassica oleracea,Red Cabbage,1.43,-6.00,22.00,1200,1680
+Brassica oleracea,Savoy Cabbage,2.00,-7.00,22.00,1200,1680
+Brassica oleracea,Broccoli,2.82,4.00,24.00,1200,1920
+Brassica oleracea,Chinese Broccoli (Gai Lan),1.20,-2.00,28.00,1200,1680
+Brassica rapa,Broccoli Raab,3.17,4.00,20.00,1200,1680
+Brassica rapa,Napa Cabbage,1.28,-4.00,25.00,1200,1680
+Brassica oleracea,Brussels Sprouts,3.38,-12.00,22.00,1200,1680
+Brassica oleracea,Green Cauliflower,2.95,5.00,20.00,1200,1920
+Brassica oleracea,Cauliflower,1.92,5.00,20.00,1200,1920
+Brassica oleracea,Kale,2.92,-15.00,24.00,1200,1680
+Brassica oleracea,Kohlrabi,1.70,7.00,24.00,1200,1680
+Brassica napus,Rutabaga,01.08,-6.00,20.00,960,1440
+Brassica juncea,Mustard Seed (Spices),26.00,4.00,30.00,1200,1680
+Brassica rapa,Mustard Spinach,2.20,4.00,25.00,1200,1680
+Brassica oleracea,Collard Greens,3.00,-7.00,29.00,1200,1680
+Brassica rapa,Bok Choy,1.50,7.00,27.00,1200,1680
+Brassica rapa,Tatsoi,2.00,-12.00,22.00,1200,1680
+Brassica rapa,Mizuna,2.10,-6.00,25.00,1200,1680
+Brassica rapa,Mibuna,2.50,-6.00,25.00,1200,1680
+Brassica rapa,Choy Sum,1.3,2.00,30.00,1200,1680
+Brassica rapa,Komatsuna,2.80,-10.00,25.00,1200,1680
+Brassica rapa,Turnip Root,0.90,5.00,22.00,960,1440
+Brassica oleracea,Romanesco Broccoli,2.4,-6.00,24.00,1200,1920
+Brassica napus,Rapeseed Greens,2.50,4.00,24.00,1440,1920
+Brassica juncea,Brown Mustard Greens,2.90,4.00,28.00,1200,1680
+Brassica nigra,Black Mustard Greens,3.00,5.00,26.00,1200,1680
+Brassica carinata,Ethiopian Kale,2.50,8.00,30.00,960,1440
+Brassica oleracea,Tronchuda Cabbage,1.50,7.00,22.00,1200,1680
+Brassica oleracea,Walking Stick Kale,2.80,-6.00,24.00,1200,1680
+Brassica napus,Siberian Kale,2.80,-18.00,22.00,1200,1680
+Brassica oleracea,Tuscan Kale (Cavolo Nero),3.30,-12.00,24.00,720,1200
+Brassica tournefortii,Sahara Mustard,3.00,2.00,35.00,960,1440
+Brassica elongata,Elongated Mustard,2.50,-4.00,28.00,960,1440
+Brassica fruticulosa,Mediterranean Cabbage,2.80,0.00,25.00,960,1440
+Brassica gravinae,Gravina Cabbage,2.70,0.00,25.00,960,1440
+Brassica hilarionis,St. Hilarion Cabbage,2.70,0.00,28.00,960,1440
+Brassica insularis,Island Cabbage,2.60,0.00,28.00,960,1440
+Brassica macrocarpa,Large-Fruited Mustard,2.70,0.00,28.00,960,1440
+Brassica rupestris,Rock Cabbage,2.50,0.00,28.00,960,1440
+Brassica villosa,Hairy Cabbage,2.60,0.00,26.00,960,1440
+Brassica balearica,Balearic Island Cabbage,2.50,0.00,28.00,1200,1680
+Brassica cretica,Cretan Cabbage,2.50,0.00,28.00,1200,1680
+Brassica juncea,Gai Choy (Mustard Cabbage),2.80,4.00,28.00,1200,1680
+Brassica juncea,Green-in-Snow Mustard,2.80,-6.00,25.00,1200,1680
+Brassica juncea,Red Frills Mustard,2.90,4.00,26.00,1200,1680
+Brassica juncea,Pink Lettucy Mustard,2.80,4.00,26.00,1200,1680
+Brassica juncea,Tendergreen Mustard,2.80,4.00,28.00,1200,1680
+Brassica juncea,Dragon Tongue Mustard,2.90,4.00,26.00,1200,1680
+Brassica juncea,Giant Red Mustard,2.90,4.00,26.00,1200,1680
+Brassica rapa,Field Mustard,2.50,-6.00,25.00,960,1440
+Brassica rapa,Turnip Rape,2.50,-6.00,22.00,960,1440
+Brassica rapa,Gold Ball Turnip,0.90,5.00,22.00,960,1440
+Brassica rapa,Petrowski Turnip,0.90,5.00,22.00,960,1440
+Brassica rapa,Shogoin Turnip,0.90,5.00,22.00,960,1440
+Brassica rapa,Hakurei Turnip,0.90,5.00,22.00,960,1440
+Brassica rapa,Seven Top Turnip,1.50,5.00,22.00,720,1440
+Brassica rapa,Tokyo Cross Turnip,0.90,5.00,22.00,720,1440
+Brassica rapa,Purple Top Milan Turnip,0.90,5.00,22.00,720,1440
+Brassica rapa,White Lady Turnip,0.90,5.00,22.00,720,1440
+Brassica rapa,Navet des Vertus Marteau,0.90,5.00,22.00,960,1440
+Brassica rapa,Hinona Kabu Turnip,0.90,5.00,22.00,720,1440
+Brassica rapa,Scarlet Ohno Revival,0.90,5.00,22.00,960,1440
+Brassica rapa,Snowball Turnip,0.90,5.00,22.00,960,1440
+Brassica rapa,White Egg Turnip,0.90,5.00,22.00,960,1440
+Brassica rapa,Southern Seven Top,1.50,5.00,25.00,960,1440
+Brassica rapa,Topper Purple Top,0.90,5.00,22.00,960,1440
+Brassica rapa,Just Right Turnip,0.90,5.00,22.00,960,1440
+Brassica rapa,Alamo Turnip,0.90,5.00,22.00,1440,1920
+Brassica rapa,Royal Crown Turnip,0.90,5.00,22.00,1440,1920
+Brassica napus,Dwarf Essex Rape,4.32,-6.00,24.00,1440,1920
+Brassica napus,Winfred Forage Rape,4.32,-6.00,24.00,1440,1920
+Brassica napus,Bonar Rape,4.32,-6.00,24.00,1440,1920
+Brassica napus,Emerald Rape,4.32,-6.00,24.00,960,1440
+Brassica napus,Hobson Rape,4.32,-6.00,24.00,960,1440
+Brassica carinata,Texsel Greens,2.50,8.00,30.00,1200,1680
+Brassica carinata,Amara Mustard,2.50,8.00,30.00,1200,1680
+Brassica nigra,Tadehagi Mustard,3.00,5.00,26.00,1200,1680
+Brassica nigra,Chinese Black Mustard,3.00,5.00,26.00,960,1680
+Brassica oleracea,Wild Cabbage,1.28,-5.00,24.00,960,1680
+Brassica oleracea,Tree Collards,3.00,-6.00,27.00,960,1680
+Brassica oleracea,Portuguese Kale,3.00,-6.00,25.00,960,1680
+Brassica oleracea,Thousand Head Kale,3.00,-15.00,24.00,960,1680
+Brassica oleracea,Pentland Brig Kale,3.00,-18.00,22.00,960,1680
+Brassica oleracea,Sutherland Kale,3.00,-18.00,22.00,960,1680
+Brassica oleracea,Jersey Kale,2.80,-6.00,24.00,960,1680
+Brassica oleracea,Ragged Jack Kale,3.30,-15.00,22.00,960,1680
+Brassica oleracea,Daubenton's Kale,3.00,-10.00,22.00,1200,1680
+Brassica oleracea,Spis Bladkool Kale,3.00,-10.00,22.00,1200,1680
+Brassica oleracea,Smooth Leaf Kale,3.00,-10.00,22.00,1200,1680
+Brassica oleracea,Palm Tree Kale,2.80,-6.00,24.00,1200,1680
+Brassica oleracea,Filderkraut Cabbage,1.38,-6.00,22.00,1200,1680
+Brassica oleracea,Mammoth Red Rock Cabbage,1.43,-6.00,22.00,1200,1680
+Brassica oleracea,January King Cabbage,1.50,-10.00,22.00,1200,1680
+Brassica oleracea,Hispi Cabbage,1.38,-6.00,22.00,1200,1680
+Brassica oleracea,Winterbor Kale,2.92,-20.00,22.00,1200,1920
+Brassica oleracea,Redbor Kale,3.00,-15.00,22.00,960,1920
+Brassica oleracea,Darkibor Kale,2.92,-15.00,22.00,1200,1680
+Brassica oleracea,Meadowlark Kale,2.92,-15.00,22.00,1200,1680
+Brassica oleracea,Vates Blue Curled Kale,2.92,-15.00,22.00,1200,1680
+Brassica oleracea,Olympic Red Kale,3.00,-15.00,22.00,1200,1680
+Brassica oleracea,Cascade Glaze Collard,3.00,-6.00,27.00,960,1680
+Brassica oleracea,Yellow Cabbage Collard,3.60,-6.00,27.00,1200,1680
+Brassica oleracea,Purple Sprouting Broccoli,3.10,-5.00,20.00,1200,1680
+Brassica oleracea,Cheddar Cauliflower,1.92,5.00,20.00,1200,1680
+Brassica oleracea,Graffiti Cauliflower,1.92,5.00,20.00,960,1440
+Brassica oleracea,Veronica Romanesco,1.92,5.00,20.00,1200,1680
+Brassica oleracea,White Vienna Kohlrabi,1.70,7.00,24.00,1200,1680
+Brassica oleracea,Purple Vienna Kohlrabi,1.70,7.00,24.00,1200,1680
+Brassica oleracea,Superschmelz Kohlrabi,1.70,7.00,24.00,1200,1680
+Brassica oleracea,Dwarf Blue Curled Kale,2.92,-15.00,22.00,1200,1680
+Brassica oleracea,Scarlet Kale,3.00,-15.00,22.00,1200,1680
+Brassica oleracea,Red Russian Kale,3.30,-18.00,22.00,1200,1680
+Brassica oleracea,Gladiator Parsnip,1.20,-6.00,24.00,1200,1680
+Brassica oleracea,Kalettes,3.15,-10.00,22.00,1200,1680
+Brassica oleracea,Broccolini,2.85,4.00,24.00,1200,1680
+Brassica oleracea,Chinese Flowering Cabbage,2.00,10.00,30.00,1200,1680
+Brassica rapa,Hon Tsai Tai,2.10,-4.00,25.00,1200,1680
+Brassica rapa,Miz America Mizuna,2.10,-6.00,25.00,1200,1680
+Brassica rapa,Tokyo Bekana,1.50,7.00,27.00,1200,1680
+Brassica rapa,Golden Pak Choi,1.50,7.00,27.00,960,1440
+Brassica rapa,Red Pak Choi,1.50,7.00,27.00,960,1440
+Brassica carinata,Brisk Green Mustard,2.50,8.00,30.00,1200,1680
+Brassica carinata,Kings Seeds Ethiopian Kale,2.50,8.00,30.00,1200,1680
+Brassica nigra,Brown Mustard 'Red Giant',3.00,5.00,26.00,1200,1680
+Brassica nigra,Mediterranean Black Mustard,3.00,5.00,26.00,1200,1680
+Brassica tournefortii,Asian Mustard,3.00,2.00,35.00,480,1200

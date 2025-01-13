@@ -2,3 +2,5 @@ streamlit
 folium
 geopandas
 streamlit_folium
+altair==4.2.2
+country-converter

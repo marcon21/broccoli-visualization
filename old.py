@@ -38,9 +38,8 @@ for i in range(start_year, end_year + 1, step):
     for _, row in gdf.iterrows():
         fake_dataset[f"{row[name_field]}_{i}"] = {
             # "value": random.randint(0, 200),
-            "value": (row.geometry.centroid.x + i * 2) % 200,
-            "lat": row.geometry.centroid.y,
-            "lon": row.geometry.centroid.x,
+            "value": (row.geometry.centroid.x + i * 2)
+            % 200,
         }
 
 # Add colormap
