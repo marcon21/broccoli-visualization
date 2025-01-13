@@ -60,9 +60,14 @@ st.write(f"**Protein Content:** {selected_plant_data['protein']} g")
 st.write(f"**Temperature Tolerance:** {min_temp}°C to {max_temp}°C")
 st.write(f"**Precipitation Tolerance:** {min_prec} mm to {max_prec} mm")
 
-weight_slider = st.slider(
-    "Select the weight of temperature in the survivability score", 0, 100, 50, 1
-)
+
+st.subheader("Adjust Survivability Score Weights")
+col1, col2 = st.columns(2)
+with col1:
+    weight_slider = st.slider("Temperature Weight (%)", 0, 100, 50, 1)
+with col2:
+    st.write(f"Temperature Weight: **{weight_slider}%**")
+    st.write(f"Precipitation Weight: **{100 - weight_slider}%**")
 temp_weight = weight_slider / 100
 prec_weight = 1 - temp_weight
 

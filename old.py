@@ -13,7 +13,7 @@ st.title("GeoJSONs with Streamlit and Folium")
 
 # Load GeoJSON files
 geojson_dir = "geojson"
-geojson_files = list(os.listdir(geojson_dir))
+geojson_files = list(os.listdir(Countrygeojson_dir))
 
 # Select a file
 selected_file = st.selectbox("Select a GeoJSON file", geojson_files, index=0)
@@ -56,7 +56,7 @@ folium.GeoJson(
     # zoom_on_click=True,
     tooltip=folium.GeoJsonTooltip(
         fields=[name_field],
-        aliases=["Country:"],
+        aliases=[":"],
         localize=True,
     ),
     style_function=lambda x: {
