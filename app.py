@@ -28,9 +28,10 @@ brassica_data["plant_variety"] = (
 selected_plant = st.selectbox("Select a Plant Species", brassica_data["plant_variety"])
 
 # Slider for year
-year = st.slider("Select a Year", 2025, 2040, 2025, step=1)
+start_year = climate_data["year"].min()
+end_year = climate_data["year"].max()
+year = st.slider("Select a Year", start_year, end_year, 2025, step=1)
 
-# autoplay = st.checkbox("Autoplay")
 
 # Extract selected plant data
 selected_plant_data = brassica_data[
