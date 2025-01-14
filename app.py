@@ -30,6 +30,8 @@ selected_plant = st.selectbox("Select a Plant Species", brassica_data["plant_var
 # Slider for year
 year = st.slider("Select a Year", 2025, 2040, 2025, step=1)
 
+# autoplay = st.checkbox("Autoplay")
+
 # Extract selected plant data
 selected_plant_data = brassica_data[
     brassica_data["plant_variety"] == selected_plant
@@ -124,11 +126,40 @@ def style_function(feature):
         }
 
 
+tooltip_info = {}
+for _, feature in geo_data.iterrows():
+    country_name = feature["name"]
+    country_name = cc.convert(names=country_name, to="name_short")
+    match = climate_year_data[climate_year_data["country"] == country_name]
+    if not match.empty:
+        tooltip_info[feature.name] = {
+            "min_temp": match.iloc[0]["min_temp"],
+            "max_temp": match.iloc[0]["max_temp"],
+            "min_prec": match.iloc[0]["min_prec"],
+            "max_prec": match.iloc[0]["max_prec"],
+        }
+
+geo_data["min_temp"] = geo_data.index.map(
+    lambda idx: tooltip_info.get(idx, {}).get("min_temp", "N/A")
+)
+geo_data["max_temp"] = geo_data.index.map(
+    lambda idx: tooltip_info.get(idx, {}).get("max_temp", "N/A")
+)
+geo_data["min_prec"] = geo_data.index.map(
+    lambda idx: tooltip_info.get(idx, {}).get("min_prec", "N/A")
+)
+geo_data["max_prec"] = geo_data.index.map(
+    lambda idx: tooltip_info.get(idx, {}).get("max_prec", "N/A")
+)
+
 # Add GeoJSON layer to the map
 folium.GeoJson(
     geo_data,
     style_function=style_function,
-    tooltip=folium.GeoJsonTooltip(fields=["name"], aliases=["Country:"]),
+    tooltip=folium.GeoJsonTooltip(
+        fields=["name", "min_temp", "max_temp", "min_prec", "max_prec"],
+        aliases=["Country:", "Min Temp:", "Max Temp:", "Min Prec:", "Max Prec:"],
+    ),
 ).add_to(m)
 
 # Render map
