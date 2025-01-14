@@ -127,6 +127,7 @@ def style_function(feature):
         }
 
 
+# Prepare tooltip information
 tooltip_info = {}
 for _, feature in geo_data.iterrows():
     country_name = feature["name"]
