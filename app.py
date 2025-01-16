@@ -55,16 +55,49 @@ climate_year_data.loc[:, "country"] = cc.convert(
 # Map creation
 map_center = [20, 0]  # Adjust as needed
 m = folium.Map(location=map_center, zoom_start=2)
+
+
+# Display selected plant information
+st.subheader("Selected Plant Information")
+with st.expander("Data extraction sources", expanded=False):
+    st.write(
+        """
+        - **Brassicaceae Databases**: Scraped and processed using LLMs for keywords like protein content, plant variety, and temperature.
+         - **Databases**: Information from the [USDA](https://www.usda.gov) and [PROTA4U Database](https://prota.prota4u.org).
+        - **BeautifulSoup Library**: Used for web scraping and exporting data as JSON files.
+        - **Camelot Library**: Extracted protein content tables from PDFs.
+        - **Google Search**: Aggregated data for missing entries.
+
+        **Final dataset**: 135 complete entries (Kappa Score of 67%).
+
+        
+        """
+    )
+st.write(f"**Species:** {selected_plant_data['species']}")
+st.write(f"**Variety:** {selected_plant_data['variety']}")
+st.write(f"**Protein Content:** {selected_plant_data['protein']} g")
+st.write(f"**Temperature Tolerance:** {min_temp}°C to {max_temp}°C")
+st.write(f"**Precipitation Tolerance:** {min_prec} mm to {max_prec} mm")
 tooltip_info = {}
 
 
 st.subheader("Adjust Survivability Score Weights")
+with st.expander("Different weights?", expanded=False):
+    st.write(
+        """
+        The weights determine the relative importance of temperature and precipitation 
+        when calculating the survivability score. 
+        - **Temperature Weight (%)**:  Higher values emphasize the impact of temperature, leading to more significant changes in country distribution based on temperature suitability.
+        - **Precipitation Weight (%)**: Higher values prioritize plant attributes being within the required range of precipitation for normal growth. This may result in subtle differences in distribution.
+
+        """
+    )
 col1, col2 = st.columns(2)
 with col1:
-    weight_slider = st.slider("Temperature Weight (%)", 0, 100, 50, 1)
+    weight_slider = st.slider("Weights (%)", 0, 100, 50, 1)
 with col2:
-    st.write(f"Temperature Weight: **{weight_slider}%**")
-    st.write(f"Precipitation Weight: **{100 - weight_slider}%**")
+    st.write(f"Temperature: **{weight_slider}%**")
+    st.write(f"Precipitation: **{100 - weight_slider}%**")
 temp_weight = weight_slider / 100
 prec_weight = 1 - temp_weight
 
