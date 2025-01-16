@@ -57,27 +57,6 @@ map_center = [20, 0]  # Adjust as needed
 m = folium.Map(location=map_center, zoom_start=2)
 
 
-# Display selected plant information
-st.subheader("Selected Plant Information")
-with st.expander("Data extraction sources", expanded=False):
-    st.write(
-        """
-        - **Brassicaceae Databases**: Scraped and processed using LLMs for keywords like protein content, plant variety, and temperature.
-         - **Databases**: Information from the [USDA](https://www.usda.gov) and [PROTA4U Database](https://prota.prota4u.org).
-        - **BeautifulSoup Library**: Used for web scraping and exporting data as JSON files.
-        - **Camelot Library**: Extracted protein content tables from PDFs.
-        - **Google Search**: Aggregated data for missing entries.
-
-        **Final dataset**: 135 complete entries (Kappa Score of 67%).
-
-        
-        """
-    )
-st.write(f"**Species:** {selected_plant_data['species']}")
-st.write(f"**Variety:** {selected_plant_data['variety']}")
-st.write(f"**Protein Content:** {selected_plant_data['protein']} g")
-st.write(f"**Temperature Tolerance:** {min_temp}°C to {max_temp}°C")
-st.write(f"**Precipitation Tolerance:** {min_prec} mm to {max_prec} mm")
 tooltip_info = {}
 
 
@@ -104,67 +83,37 @@ prec_weight = 1 - temp_weight
 st.subheader("Map Visualization")
 
 
-# def calculate_survivability(row, min_temp, max_temp, min_prec, max_prec):
-#     # Temperature survivability
-#     if min_temp < row["min_temp"] < row["max_temp"] < max_temp:
-#         temp_score = 1  # Perfect overlap
-#     elif (
-#         min_temp < max_temp < row["min_temp"] < row["max_temp"]
-#         or row["min_temp"] < row["max_temp"] < min_temp < max_temp
-#     ):
-#         temp_score = 0  # No overlap
-#     elif min_temp < row["min_temp"] < max_temp < row["max_temp"]:
-#         # Partial overlap 1: PminT < CminT < PmaxT < CmaxT
-#         temp_score = (max_temp - row["min_temp"]) / (max_temp - min_temp)
-#     elif row["min_temp"] < min_temp < row["max_temp"] < max_temp:
-#         # Partial overlap 2: CminT < PminT < CmaxT < PmaxT
-#         temp_score = (row["max_temp"] - min_temp) / (max_temp - min_temp)
-#     elif row["min_temp"] < min_temp < max_temp < row["max_temp"]:
-#         # Partial overlap 3: CminT < PminT < PmaxT < CmaxT
-#         temp_score = (max_temp - min_temp) / (row["max_temp"] - row["min_temp"])
-#     else:
-#         temp_score = 0  # Default for no overlap
-
-#     # Precipitation survivability (similar logic)
-#     if min_prec < row["min_prec"] < row["max_prec"] < max_prec:
-#         prec_score = 1  # Perfect overlap
-#     elif (
-#         min_prec < max_prec < row["min_prec"] < row["max_prec"]
-#         or row["min_prec"] < row["max_prec"] < min_prec < max_prec
-#     ):
-#         prec_score = 0  # No overlap
-#     elif min_prec < row["min_prec"] < max_prec < row["max_prec"]:
-#         # Partial overlap 1: PminP < CminP < PmaxP < CmaxP
-#         prec_score = (max_prec - row["min_prec"]) / (max_prec - min_prec)
-#     elif row["min_prec"] < min_prec < row["max_prec"] < max_prec:
-#         # Partial overlap 2: CminP < PminP < CmaxP < PmaxP
-#         prec_score = (row["max_prec"] - min_prec) / (max_prec - min_prec)
-#     elif row["min_prec"] < min_prec < max_prec < row["max_prec"]:
-#         # Partial overlap 3: CminP < PminP < PmaxP < CmaxP
-#         prec_score = (max_prec - min_prec) / (row["max_prec"] - row["min_prec"])
-#     else:
-#         prec_score = 0  # Default for no overlap
-
-#     # Combine temperature and precipitation scores with weights
-#     survivability_score = temp_weight * temp_score + prec_weight * prec_score
-
-#     return round(survivability_score, 3)
-
-
-# Function to calculate survivability score
 def calculate_survivability(row, min_temp, max_temp, min_prec, max_prec):
-    # Temperature overlap score (0 to 1)
-    temp_overlap = max(
-        0, min(max_temp, row["max_temp"]) - max(min_temp, row["min_temp"])
-    ) / (max_temp - min_temp)
+    # Temperature survivability
+    if row["max_temp"] < min_temp or row["min_temp"] > max_temp:
+        temp_score = 0  # No overlap
+    elif min_temp <= row["min_temp"] and row["max_temp"] <= max_temp:
+        temp_score = 1  # Perfect overlap
+    else:
+        # Partial overlap: calculate proportion of overlap
+        overlap_start = max(min_temp, row["min_temp"])
+        overlap_end = min(max_temp, row["max_temp"])
+        overlap_range = overlap_end - overlap_start
+        plant_range = max_temp - min_temp
+        temp_score = max(0, overlap_range / plant_range)
 
-    # Precipitation overlap score (0 to 1)
-    prec_overlap = max(
-        0, min(max_prec, row["max_prec"]) - max(min_prec, row["min_prec"])
-    ) / (max_prec - min_prec)
+    # Precipitation survivability
+    if row["max_prec"] < min_prec or row["min_prec"] > max_prec:
+        prec_score = 0  # No overlap
+    elif min_prec <= row["min_prec"] and row["max_prec"] <= max_prec:
+        prec_score = 1  # Perfect overlap
+    else:
+        # Partial overlap: calculate proportion of overlap
+        overlap_start = max(min_prec, row["min_prec"])
+        overlap_end = min(max_prec, row["max_prec"])
+        overlap_range = overlap_end - overlap_start
+        plant_range = max_prec - min_prec
+        prec_score = max(0, overlap_range / plant_range)
 
-    # Survivability score (weighted average)
-    return temp_overlap * temp_weight + prec_overlap * prec_weight
+    # Combine scores with weights
+    survivability_score = temp_weight * temp_score + prec_weight * prec_score
+
+    return round(survivability_score, 3)
 
 
 colormap = linear.RdYlGn_11.scale(
@@ -245,6 +194,12 @@ folium.GeoJson(
     ),
 ).add_to(m)
 
+folium.plugins.Fullscreen(
+    position="topright",
+    title="Expand me",
+    title_cancel="Exit me",
+    force_separate_button=True,
+).add_to(m)
 
 colormap.add_to(m)
 
@@ -254,6 +209,20 @@ st_folium(m, width=700, height=500)
 
 # Display selected plant information
 st.subheader("Selected Plant Information")
+with st.expander("Data extraction sources", expanded=False):
+    st.write(
+        """
+        - **Brassicaceae Databases**: Scraped and processed using LLMs for keywords like protein content, plant variety, and temperature.
+         - **Databases**: Information from the [USDA](https://www.usda.gov) and [PROTA4U Database](https://prota.prota4u.org).
+        - **BeautifulSoup Library**: Used for web scraping and exporting data as JSON files.
+        - **Camelot Library**: Extracted protein content tables from PDFs.
+        - **Google Search**: Aggregated data for missing entries.
+
+        **Final dataset**: 135 complete entries (Kappa Score of 67%).
+
+        
+        """
+    )
 st.write(f"**Species:** {selected_plant_data['species']}")
 st.write(f"**Variety:** {selected_plant_data['variety']}")
 st.write(f"**Protein Content:** {selected_plant_data['protein']} g")
