@@ -25,7 +25,8 @@ st.title("Plant Survival Visualization")
 brassica_data["plant_variety"] = (
     brassica_data["species"] + " - " + brassica_data["variety"]
 )
-selected_plant = st.selectbox("Select a Plant Species", brassica_data["plant_variety"])
+plants_names_ordered = sorted(brassica_data["plant_variety"])
+selected_plant = st.selectbox("Select a Plant Species", plants_names_ordered)
 
 # Slider for year
 start_year = climate_data["year"].min()
@@ -53,15 +54,6 @@ climate_year_data.loc[:, "country"] = cc.convert(
 # Map creation
 map_center = [20, 0]  # Adjust as needed
 m = folium.Map(location=map_center, zoom_start=2)
-
-
-# Display selected plant information
-st.subheader("Selected Plant Information")
-st.write(f"**Species:** {selected_plant_data['species']}")
-st.write(f"**Variety:** {selected_plant_data['variety']}")
-st.write(f"**Protein Content:** {selected_plant_data['protein']} g")
-st.write(f"**Temperature Tolerance:** {min_temp}°C to {max_temp}°C")
-st.write(f"**Precipitation Tolerance:** {min_prec} mm to {max_prec} mm")
 
 
 st.subheader("Adjust Survivability Score Weights")
@@ -164,5 +156,15 @@ folium.GeoJson(
     ),
 ).add_to(m)
 
+
 # Render map
 st_folium(m, width=700, height=500)
+
+
+# Display selected plant information
+st.subheader("Selected Plant Information")
+st.write(f"**Species:** {selected_plant_data['species']}")
+st.write(f"**Variety:** {selected_plant_data['variety']}")
+st.write(f"**Protein Content:** {selected_plant_data['protein']} g")
+st.write(f"**Temperature Tolerance:** {min_temp}°C to {max_temp}°C")
+st.write(f"**Precipitation Tolerance:** {min_prec} mm to {max_prec} mm")
