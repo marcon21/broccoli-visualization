@@ -5,6 +5,7 @@ from streamlit_folium import st_folium
 import streamlit as st
 import country_converter as coco
 import matplotlib.pyplot as plt
+from branca.colormap import linear
 
 cc = coco.CountryConverter()
 
@@ -25,7 +26,8 @@ st.title("Plant Survival Visualization")
 brassica_data["plant_variety"] = (
     brassica_data["species"] + " - " + brassica_data["variety"]
 )
-selected_plant = st.selectbox("Select a Plant Species", brassica_data["plant_variety"])
+plants_names_ordered = sorted(brassica_data["plant_variety"])
+selected_plant = st.selectbox("Select a Plant Species", plants_names_ordered)
 
 # Slider for year
 start_year = climate_data["year"].min()
@@ -53,15 +55,7 @@ climate_year_data.loc[:, "country"] = cc.convert(
 # Map creation
 map_center = [20, 0]  # Adjust as needed
 m = folium.Map(location=map_center, zoom_start=2)
-
-
-# Display selected plant information
-st.subheader("Selected Plant Information")
-st.write(f"**Species:** {selected_plant_data['species']}")
-st.write(f"**Variety:** {selected_plant_data['variety']}")
-st.write(f"**Protein Content:** {selected_plant_data['protein']} g")
-st.write(f"**Temperature Tolerance:** {min_temp}°C to {max_temp}°C")
-st.write(f"**Precipitation Tolerance:** {min_prec} mm to {max_prec} mm")
+tooltip_info = {}
 
 
 st.subheader("Adjust Survivability Score Weights")
@@ -77,6 +71,53 @@ prec_weight = 1 - temp_weight
 st.subheader("Map Visualization")
 
 
+# def calculate_survivability(row, min_temp, max_temp, min_prec, max_prec):
+#     # Temperature survivability
+#     if min_temp < row["min_temp"] < row["max_temp"] < max_temp:
+#         temp_score = 1  # Perfect overlap
+#     elif (
+#         min_temp < max_temp < row["min_temp"] < row["max_temp"]
+#         or row["min_temp"] < row["max_temp"] < min_temp < max_temp
+#     ):
+#         temp_score = 0  # No overlap
+#     elif min_temp < row["min_temp"] < max_temp < row["max_temp"]:
+#         # Partial overlap 1: PminT < CminT < PmaxT < CmaxT
+#         temp_score = (max_temp - row["min_temp"]) / (max_temp - min_temp)
+#     elif row["min_temp"] < min_temp < row["max_temp"] < max_temp:
+#         # Partial overlap 2: CminT < PminT < CmaxT < PmaxT
+#         temp_score = (row["max_temp"] - min_temp) / (max_temp - min_temp)
+#     elif row["min_temp"] < min_temp < max_temp < row["max_temp"]:
+#         # Partial overlap 3: CminT < PminT < PmaxT < CmaxT
+#         temp_score = (max_temp - min_temp) / (row["max_temp"] - row["min_temp"])
+#     else:
+#         temp_score = 0  # Default for no overlap
+
+#     # Precipitation survivability (similar logic)
+#     if min_prec < row["min_prec"] < row["max_prec"] < max_prec:
+#         prec_score = 1  # Perfect overlap
+#     elif (
+#         min_prec < max_prec < row["min_prec"] < row["max_prec"]
+#         or row["min_prec"] < row["max_prec"] < min_prec < max_prec
+#     ):
+#         prec_score = 0  # No overlap
+#     elif min_prec < row["min_prec"] < max_prec < row["max_prec"]:
+#         # Partial overlap 1: PminP < CminP < PmaxP < CmaxP
+#         prec_score = (max_prec - row["min_prec"]) / (max_prec - min_prec)
+#     elif row["min_prec"] < min_prec < row["max_prec"] < max_prec:
+#         # Partial overlap 2: CminP < PminP < CmaxP < PmaxP
+#         prec_score = (row["max_prec"] - min_prec) / (max_prec - min_prec)
+#     elif row["min_prec"] < min_prec < max_prec < row["max_prec"]:
+#         # Partial overlap 3: CminP < PminP < PmaxP < CmaxP
+#         prec_score = (max_prec - min_prec) / (row["max_prec"] - row["min_prec"])
+#     else:
+#         prec_score = 0  # Default for no overlap
+
+#     # Combine temperature and precipitation scores with weights
+#     survivability_score = temp_weight * temp_score + prec_weight * prec_score
+
+#     return round(survivability_score, 3)
+
+
 # Function to calculate survivability score
 def calculate_survivability(row, min_temp, max_temp, min_prec, max_prec):
     # Temperature overlap score (0 to 1)
@@ -90,15 +131,16 @@ def calculate_survivability(row, min_temp, max_temp, min_prec, max_prec):
     ) / (max_prec - min_prec)
 
     # Survivability score (weighted average)
-    return temp_overlap * temp_weight + prec_overlap * prec_weight  # Equal weighting
+    return temp_overlap * temp_weight + prec_overlap * prec_weight
 
 
-# Function to map score to color
-def survivability_to_color(score):
-    # Use a colormap from matplotlib (e.g., 'viridis' or 'RdYlGn')
-    colormap = plt.cm.RdYlGn  # Red to green spectrum
-    rgba = colormap(score)  # Map score (0 to 1) to RGBA
-    return f"rgba({int(rgba[0] * 255)}, {int(rgba[1] * 255)}, {int(rgba[2] * 255)}, {rgba[3]})"
+colormap = linear.RdYlGn_11.scale(
+    0,
+    1,
+)
+
+colormap.caption = "COLORMAP TEST"
+colormap.add_to(m)
 
 
 # Updated style function
@@ -111,7 +153,7 @@ def style_function(feature):
         survivability_score = calculate_survivability(
             country_climate.iloc[0], min_temp, max_temp, min_prec, max_prec
         )
-        color = survivability_to_color(survivability_score)
+        color = colormap(survivability_score)
         return {
             "fillColor": color,
             "color": "black",
@@ -128,7 +170,6 @@ def style_function(feature):
 
 
 # Prepare tooltip information
-tooltip_info = {}
 for _, feature in geo_data.iterrows():
     country_name = feature["name"]
     country_name = cc.convert(names=country_name, to="name_short")
@@ -154,15 +195,34 @@ geo_data["max_prec"] = geo_data.index.map(
     lambda idx: tooltip_info.get(idx, {}).get("max_prec", "N/A")
 )
 
+
 # Add GeoJSON layer to the map
 folium.GeoJson(
     geo_data,
     style_function=style_function,
     tooltip=folium.GeoJsonTooltip(
         fields=["name", "min_temp", "max_temp", "min_prec", "max_prec"],
-        aliases=["Country:", "Min Temp:", "Max Temp:", "Min Prec:", "Max Prec:"],
+        aliases=[
+            "Country:",
+            "Min Temp:",
+            "Max Temp:",
+            "Min Prec:",
+            "Max Prec:",
+        ],
     ),
 ).add_to(m)
 
+
+colormap.add_to(m)
+
 # Render map
 st_folium(m, width=700, height=500)
+
+
+# Display selected plant information
+st.subheader("Selected Plant Information")
+st.write(f"**Species:** {selected_plant_data['species']}")
+st.write(f"**Variety:** {selected_plant_data['variety']}")
+st.write(f"**Protein Content:** {selected_plant_data['protein']} g")
+st.write(f"**Temperature Tolerance:** {min_temp}°C to {max_temp}°C")
+st.write(f"**Precipitation Tolerance:** {min_prec} mm to {max_prec} mm")
