@@ -5,6 +5,7 @@ from streamlit_folium import st_folium
 import streamlit as st
 import country_converter as coco
 import matplotlib.pyplot as plt
+from branca.colormap import linear
 
 cc = coco.CountryConverter()
 
@@ -85,12 +86,13 @@ def calculate_survivability(row, min_temp, max_temp, min_prec, max_prec):
     return temp_overlap * temp_weight + prec_overlap * prec_weight  # Equal weighting
 
 
-# Function to map score to color
-def survivability_to_color(score):
-    # Use a colormap from matplotlib (e.g., 'viridis' or 'RdYlGn')
-    colormap = plt.cm.RdYlGn  # Red to green spectrum
-    rgba = colormap(score)  # Map score (0 to 1) to RGBA
-    return f"rgba({int(rgba[0] * 255)}, {int(rgba[1] * 255)}, {int(rgba[2] * 255)}, {rgba[3]})"
+colormap = linear.RdYlGn_11.scale(
+    0,
+    1,
+)
+
+colormap.caption = "COLORMAP TEST"
+colormap.add_to(m)
 
 
 # Updated style function
@@ -103,7 +105,7 @@ def style_function(feature):
         survivability_score = calculate_survivability(
             country_climate.iloc[0], min_temp, max_temp, min_prec, max_prec
         )
-        color = survivability_to_color(survivability_score)
+        color = colormap(survivability_score)
         return {
             "fillColor": color,
             "color": "black",
@@ -156,6 +158,8 @@ folium.GeoJson(
     ),
 ).add_to(m)
 
+
+colormap.add_to(m)
 
 # Render map
 st_folium(m, width=700, height=500)
