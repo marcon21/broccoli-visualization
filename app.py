@@ -17,7 +17,7 @@ climate_file = "data/merged_data.csv"
 # Read GeoJSON and CSV data
 geo_data = gpd.read_file(geojson_file)
 brassica_data = pd.read_csv(brassica_file)
-climate_data = pd.read_csv(climate_file, delimiter=";")
+climate_data = pd.read_csv(climate_file)
 
 # Streamlit app
 st.title("Plant Survival Visualization")
