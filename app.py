@@ -212,7 +212,11 @@ folium.plugins.Fullscreen(
 
 def get_coordinates(place_name):
     area = nominatim.query(place_name)
+    # from pprint import pprint
+
     if area:
+        # pprint(sorted(area.toJSON(), key=lambda x: x["importance"], reverse=True))
+        # print()
         for a in sorted(area.toJSON(), key=lambda x: x["importance"], reverse=True):
             latitude = a["lat"]
             longitude = a["lon"]
@@ -227,10 +231,12 @@ def add_markers(map_obj):
     plant_countries = selected_plant_data["country"].split(",")
 
     random.seed(42)
+    # st.write(plant_countries)
     for place in plant_countries:
         coordinates = next(get_coordinates(place.strip()), None)
         # for coordinates in get_coordinates(place.strip()):
         if coordinates:
+            # st.write(f"Coordinates for {place}: {coordinates}")
             # Randomly offset the coordinates by a small amount
             offset_coordinates = [
                 float(coordinates[0]) + random.uniform(-0.1, 0.1),
