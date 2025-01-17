@@ -6,6 +6,14 @@ import streamlit as st
 import country_converter as coco
 import matplotlib.pyplot as plt
 from branca.colormap import linear
+from folium.plugins import MarkerCluster
+from OSMPythonTools.overpass import Overpass
+from OSMPythonTools.nominatim import Nominatim
+import random
+
+
+overpass = Overpass()
+nominatim = Nominatim()
 
 cc = coco.CountryConverter()
 
@@ -201,6 +209,43 @@ folium.plugins.Fullscreen(
     force_separate_button=True,
 ).add_to(m)
 
+
+def get_coordinates(place_name):
+    area = nominatim.query(place_name)
+    if area:
+        for a in sorted(area.toJSON(), key=lambda x: x["importance"], reverse=True):
+            latitude = a["lat"]
+            longitude = a["lon"]
+            yield latitude, longitude
+
+    yield None
+
+
+# Add random markers
+def add_markers(map_obj):
+    marker_cluster = MarkerCluster().add_to(map_obj)
+    plant_countries = selected_plant_data["country"].split(",")
+
+    random.seed(42)
+    for place in plant_countries:
+        coordinates = next(get_coordinates(place.strip()), None)
+        # for coordinates in get_coordinates(place.strip()):
+        if coordinates:
+            # Randomly offset the coordinates by a small amount
+            offset_coordinates = [
+                float(coordinates[0]) + random.uniform(-0.1, 0.1),
+                float(coordinates[1]) + random.uniform(-0.1, 0.1),
+            ]
+
+            folium.Marker(
+                location=offset_coordinates,
+                popup=place,
+                icon=folium.Icon(color="green", icon="leaf"),
+            ).add_to(marker_cluster)
+
+
+add_markers(m)
+
 colormap.add_to(m)
 
 # Render map
@@ -228,3 +273,19 @@ st.write(f"**Variety:** {selected_plant_data['variety']}")
 st.write(f"**Protein Content:** {selected_plant_data['protein']} g")
 st.write(f"**Temperature Tolerance:** {min_temp}°C to {max_temp}°C")
 st.write(f"**Precipitation Tolerance:** {min_prec} mm to {max_prec} mm")
+
+
+@st.cache_data
+def convert_to_csv(df):
+    """Converts a DataFrame to CSV format."""
+    return df.to_csv(index=False).encode("utf-8")
+
+
+# Option 1: Export Filtered Climate Data
+filtered_csv = convert_to_csv(climate_year_data)
+st.download_button(
+    label="Download Climate Data",
+    data=filtered_csv,
+    file_name=f"climate_data_{year}.csv",
+    mime="text/csv",
+)
