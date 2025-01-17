@@ -218,7 +218,7 @@ with st.expander("Data extraction sources", expanded=False):
         - **Camelot Library**: Extracted protein content tables from PDFs.
         - **Google Search**: Aggregated data for missing entries.
 
-        **Final dataset**: 135 complete entries (Kappa Score of 67%).
+        **Final dataset**: 134 complete entries (Kappa Score of 67%).
 
         
         """
