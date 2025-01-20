@@ -30,6 +30,8 @@ climate_data = pd.read_csv(climate_file)
 # Streamlit app
 st.title("Plant Survival Visualization")
 
+st.markdown("## Lorem Ipsum")
+
 # Dropdown for plant species
 brassica_data["plant_variety"] = (
     brassica_data["species"] + " - " + brassica_data["variety"]
@@ -129,20 +131,38 @@ colormap = linear.RdYlGn_11.scale(
     1,
 )
 
-colormap.caption = "COLORMAP TEST"
+colormap.caption = "Survivability Score"
 colormap.add_to(m)
+
+
+def compute_all_survivability():
+    score_values = {}
+    for idx, row in climate_year_data.iterrows():
+        country_name = row["country"]
+        country_name = cc.convert(names=country_name, to="name_short")
+        country_climate = climate_year_data[
+            climate_year_data["country"] == country_name
+        ]
+        survivability_score = calculate_survivability(
+            country_climate.iloc[0], min_temp, max_temp, min_prec, max_prec
+        )
+        score_values[country_name] = survivability_score
+
+    return score_values
+
+
+score_values = compute_all_survivability()
 
 
 # Updated style function
 def style_function(feature):
+    global score_values
     country_name = feature["properties"]["name"]
     country_name = cc.convert(names=country_name, to="name_short")
     country_climate = climate_year_data[climate_year_data["country"] == country_name]
 
     if not country_climate.empty:
-        survivability_score = calculate_survivability(
-            country_climate.iloc[0], min_temp, max_temp, min_prec, max_prec
-        )
+        survivability_score = score_values[country_name]
         color = colormap(survivability_score)
         return {
             "fillColor": color,
@@ -184,20 +204,30 @@ geo_data["min_prec"] = geo_data.index.map(
 geo_data["max_prec"] = geo_data.index.map(
     lambda idx: tooltip_info.get(idx, {}).get("max_prec", "N/A")
 )
-
+geo_data["surv_score"] = geo_data.name.map(
+    lambda x: score_values.get(cc.convert(names=x, to="name_short"), "N/A")
+)
 
 # Add GeoJSON layer to the map
 folium.GeoJson(
     geo_data,
     style_function=style_function,
     tooltip=folium.GeoJsonTooltip(
-        fields=["name", "min_temp", "max_temp", "min_prec", "max_prec"],
+        fields=[
+            "name",
+            "min_temp",
+            "max_temp",
+            "min_prec",
+            "max_prec",
+            "surv_score",
+        ],
         aliases=[
             "Country:",
             "Min Temp:",
             "Max Temp:",
             "Min Prec:",
             "Max Prec:",
+            "Survivability Score:",
         ],
     ),
 ).add_to(m)
@@ -253,6 +283,7 @@ def add_markers(map_obj):
 add_markers(m)
 
 colormap.add_to(m)
+
 
 # Render map
 st_folium(m, width=700, height=500)
