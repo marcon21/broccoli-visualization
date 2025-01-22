@@ -27,25 +27,27 @@ geo_data = gpd.read_file(geojson_file)
 brassica_data = pd.read_csv(brassica_file)
 climate_data = pd.read_csv(climate_file)
 
-# Streamlit app
 st.title("Plant Survival Visualization")
 
-st.markdown("## Lorem Ipsum")
+with st.expander("About the project", expanded=False):
+    st.markdown(
+        """<div style="text-align: justify;">
+    The sustainable production of food is a critical challenge due to global climate change, increasing the importance of innovative approaches to agriculture. This study explores the Brassicaceae family as a potential source of climate-resilient, protein-rich crops. We compile a structured dataset of 134 Brassicaceae species, including information on protein content, temperature, precipitation tolerance, and countries in which they currently grow. Using climate projections from the CMIP6-x0.25 model, we develop a survivability function to predict the chance of survival of these species from 2025 to 2100. The final output is an interactive web-based visualization tool, that enables users to identify countries best suited for growing Brassicaceae crops based on future climate conditions.    
+    </div></br>""",
+        unsafe_allow_html=True,
+    )
 
-# Dropdown for plant species
 brassica_data["plant_variety"] = (
     brassica_data["species"] + " - " + brassica_data["variety"]
 )
 plants_names_ordered = sorted(brassica_data["plant_variety"])
 selected_plant = st.selectbox("Select a Plant Species", plants_names_ordered)
 
-# Slider for year
 start_year = climate_data["year"].min()
 end_year = climate_data["year"].max()
 year = st.slider("Select a Year", start_year, end_year, 2025, step=1)
 
 
-# Extract selected plant data
 selected_plant_data = brassica_data[
     brassica_data["plant_variety"] == selected_plant
 ].iloc[0]
@@ -55,15 +57,13 @@ min_prec = selected_plant_data["min_prec"]
 max_prec = selected_plant_data["max_prec"]
 
 
-# Filter climate data for the selected year
 climate_year_data = climate_data[climate_data["year"] == year]
 climate_year_data.loc[:, "country"] = cc.convert(
     climate_year_data["country"], to="name_short"
 )
 
 
-# Map creation
-map_center = [20, 0]  # Adjust as needed
+map_center = [20, 0]
 m = folium.Map(location=map_center, zoom_start=2)
 
 
@@ -93,35 +93,35 @@ prec_weight = 1 - temp_weight
 st.subheader("Map Visualization")
 
 
-def calculate_survivability(row, min_temp, max_temp, min_prec, max_prec):
-    # Temperature survivability
-    if row["max_temp"] < min_temp or row["min_temp"] > max_temp:
-        temp_score = 0  # No overlap
-    elif min_temp <= row["min_temp"] and row["max_temp"] <= max_temp:
-        temp_score = 1  # Perfect overlap
-    else:
-        # Partial overlap: calculate proportion of overlap
-        overlap_start = max(min_temp, row["min_temp"])
-        overlap_end = min(max_temp, row["max_temp"])
-        overlap_range = overlap_end - overlap_start
-        plant_range = max_temp - min_temp
-        temp_score = max(0, overlap_range / plant_range)
+def calculate_survivability(
+    row,
+    min_temp,
+    max_temp,
+    min_prec,
+    max_prec,
+):
+    def calculate_overlap_score(min_plant, max_plant, min_climate, max_climate):
+        plant_range = max_plant - min_plant  # Calculate plant range
 
-    # Precipitation survivability
-    if row["max_prec"] < min_prec or row["min_prec"] > max_prec:
-        prec_score = 0  # No overlap
-    elif min_prec <= row["min_prec"] and row["max_prec"] <= max_prec:
-        prec_score = 1  # Perfect overlap
-    else:
-        # Partial overlap: calculate proportion of overlap
-        overlap_start = max(min_prec, row["min_prec"])
-        overlap_end = min(max_prec, row["max_prec"])
-        overlap_range = overlap_end - overlap_start
-        plant_range = max_prec - min_prec
-        prec_score = max(0, overlap_range / plant_range)
+        if min_climate >= min_plant and max_climate <= max_plant:  # Perfect overlap
+            return 1.0
+        elif max_climate < min_plant or min_climate > max_plant:  # No overlap
+            return 0.0
+        else:  # Partial overlap
+            overlap_start = max(min_plant, min_climate)
+            overlap_end = min(max_plant, max_climate)
+            overlap_range = overlap_end - overlap_start
+            return max(0, overlap_range / plant_range)  # Normalize by plant range
 
-    # Combine scores with weights
-    survivability_score = temp_weight * temp_score + prec_weight * prec_score
+    temp_score = calculate_overlap_score(
+        min_temp, max_temp, row["min_temp"], row["max_temp"]
+    )
+
+    prec_score = calculate_overlap_score(
+        min_prec, max_prec, row["min_prec"], row["max_prec"]
+    )
+
+    survivability_score = (temp_weight * temp_score) + (prec_weight * prec_score)
 
     return round(survivability_score, 3)
 
@@ -135,7 +135,13 @@ colormap.caption = "Survivability Score"
 colormap.add_to(m)
 
 
-def compute_all_survivability():
+def compute_all_survivability(
+    min_temp=min_temp,
+    max_temp=max_temp,
+    min_prec=min_prec,
+    max_prec=max_prec,
+    climate_year_data=climate_year_data,
+):
     score_values = {}
     for idx, row in climate_year_data.iterrows():
         country_name = row["country"]
@@ -146,6 +152,7 @@ def compute_all_survivability():
         survivability_score = calculate_survivability(
             country_climate.iloc[0], min_temp, max_temp, min_prec, max_prec
         )
+
         score_values[country_name] = survivability_score
 
     return score_values
@@ -154,7 +161,6 @@ def compute_all_survivability():
 score_values = compute_all_survivability()
 
 
-# Updated style function
 def style_function(feature):
     global score_values
     country_name = feature["properties"]["name"]
@@ -179,7 +185,6 @@ def style_function(feature):
         }
 
 
-# Prepare tooltip information
 for _, feature in geo_data.iterrows():
     country_name = feature["name"]
     country_name = cc.convert(names=country_name, to="name_short")
@@ -208,7 +213,6 @@ geo_data["surv_score"] = geo_data.name.map(
     lambda x: score_values.get(cc.convert(names=x, to="name_short"), "N/A")
 )
 
-# Add GeoJSON layer to the map
 folium.GeoJson(
     geo_data,
     style_function=style_function,
@@ -242,11 +246,8 @@ folium.plugins.Fullscreen(
 
 def get_coordinates(place_name):
     area = nominatim.query(place_name)
-    # from pprint import pprint
 
     if area:
-        # pprint(sorted(area.toJSON(), key=lambda x: x["importance"], reverse=True))
-        # print()
         for a in sorted(area.toJSON(), key=lambda x: x["importance"], reverse=True):
             latitude = a["lat"]
             longitude = a["lon"]
@@ -255,7 +256,6 @@ def get_coordinates(place_name):
     yield None
 
 
-# Add random markers
 def add_markers(map_obj):
     marker_cluster = MarkerCluster().add_to(map_obj)
     plant_countries = selected_plant_data["country"].split(",")
@@ -281,7 +281,6 @@ def add_markers(map_obj):
 
 
 add_markers(m)
-
 colormap.add_to(m)
 
 
